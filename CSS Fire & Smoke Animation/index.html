@@ -1,0 +1,311 @@
+# Simple Animation Created By TEAM LIGHT
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Fire & Smoke Animation</title>
+<style>
+:root{
+  --bg:#0b0810;
+  --embers:#ffb86b;
+  --flame1:#ff3b3b;
+  --flame2:#ff9a3c;
+  --flame3:#ffd36b;
+  --smokec:#222;
+  --glass: rgba(255,255,255,0.03);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(255,120,80,0.03), transparent 10%),
+    radial-gradient(900px 400px at 90% 90%, rgba(100,150,255,0.02), transparent 10%),
+    var(--bg);
+  display:grid;
+  place-items:center;
+  font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow:hidden;
+  height:100vh;
+}
+.stage{
+  width:min(680px,92vw);
+  aspect-ratio: 9/7;
+  display:grid;
+  grid-template-rows:1fr auto;
+  gap:18px;
+  align-items:end;
+  padding:28px;
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent 40%);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+  position:relative;
+  overflow:visible;
+}
+.stage .watermark{
+  position:absolute;
+  right:12px;
+  bottom:8px;
+  font-size:11px;
+  color:rgba(255,255,255,0.35);
+  font-weight:600;
+  pointer-events:none;
+  letter-spacing:0.6px;
+  transform:translateZ(0);
+  mix-blend-mode:screen;
+  opacity:0.9;
+}
+.hud{
+  color:#fff;
+  font-weight:600;
+  letter-spacing:1px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:16px;
+}
+.scene{
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:end;
+  padding-bottom:34px;
+  perspective:800px;
+}
+.firebase{
+  width:200px;
+  height:260px;
+  position:relative;
+  transform-style:preserve-3d;
+  display:grid;
+  place-items:end;
+}
+.log{
+  width:220px;
+  height:36px;
+  border-radius:12px;
+  background:linear-gradient(90deg,#3a2b20,#2a1b14);
+  box-shadow:0 18px 30px rgba(0,0,0,0.6),0 6px 12px rgba(0,0,0,0.5), inset 0 -6px 18px rgba(255,140,60,0.05);
+  transform:translateY(34px) rotateX(12deg) scaleX(1.06);
+  position:relative;
+  overflow:visible;
+}
+.log:before{
+  content:"";
+  position:absolute;
+  left:8px;
+  right:8px;
+  top:6px;
+  height:8px;
+  border-radius:6px;
+  background:linear-gradient(90deg,rgba(255,255,255,0.03),rgba(0,0,0,0.06));
+  filter:blur(0.4px);
+  mix-blend-mode:overlay;
+}
+.flame{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:40px;
+  width:120px;
+  height:180px;
+  display:grid;
+  place-items:end;
+  pointer-events:none;
+  filter:drop-shadow(0 12px 30px rgba(255,100,40,0.12));
+}
+.flicker{animation:flick 2.7s ease-in-out infinite}
+.f1,.f2,.f3{position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-radius:50% 50% 40% 40%/60% 60% 40% 40%}
+.f1{width:84px;height:120px;background:radial-gradient(60% 40% at 50% 20%,var(--flame3) 0%, transparent 40%),linear-gradient(180deg,var(--flame2),transparent);animation:rise1 2.2s infinite ease-in-out, sway1 3s infinite ease-in-out;mix-blend-mode:screen;opacity:0.95;filter:blur(6px) saturate(120%)}
+.f2{width:120px;height:160px;background:radial-gradient(60% 40% at 50% 15%,var(--flame2) 0%, transparent 35%),linear-gradient(180deg,var(--flame1),transparent);animation:rise2 2.6s infinite ease-in-out, sway2 3.4s infinite ease-in-out;opacity:0.9;filter:blur(4px)}
+.f3{width:56px;height:84px;background:radial-gradient(circle at 50% 20%,#fff 0%,var(--flame3) 30%, transparent 60%);animation:rise3 1.9s infinite ease-in-out, sway3 2.8s infinite ease-in-out;opacity:0.98;filter:blur(1px) saturate(140%)}
+.embers{
+  position:absolute;
+  left:50%;
+  bottom:24px;
+  transform:translateX(-50%);
+  width:260px;
+  height:100px;
+  pointer-events:none;
+  overflow:visible;
+}
+.spark{
+  position:absolute;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--embers);box-shadow:0 0 16px rgba(255,150,70,0.9);
+  animation:ember 2.6s infinite linear;
+  opacity:0;
+}
+.spark:nth-child(1){left:40%;bottom:14px;animation-duration:2.6s;animation-delay:0s;transform-origin:center}
+.spark:nth-child(2){left:56%;bottom:18px;animation-duration:2.2s;animation-delay:0.12s}
+.spark:nth-child(3){left:32%;bottom:8px;animation-duration:3.1s;animation-delay:0.4s}
+.spark:nth-child(4){left:70%;bottom:10px;animation-duration:2.7s;animation-delay:0.25s}
+.spark:nth-child(5){left:48%;bottom:6px;animation-duration:3.4s;animation-delay:0.6s}
+.smoke{
+  position:absolute;
+  left:50%;
+  bottom:170px;
+  transform:translateX(-50%);
+  width:220px;height:260px;pointer-events:none;
+  overflow:visible;
+}
+.s-part{
+  position:absolute;
+  left:50%;bottom:20px;
+  width:22px;height:22px;border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.15));
+  filter:blur(6px);
+  opacity:0.06;
+  transform-origin:center;
+  animation:smokeUp 6s infinite linear;
+  mix-blend-mode:normal;
+}
+.s-part:nth-child(1){left:46%;animation-duration:6.6s;animation-delay:0s;width:26px;height:26px;opacity:0.08}
+.s-part:nth-child(2){left:60%;animation-duration:5.8s;animation-delay:0.8s;width:34px;height:30px;opacity:0.06}
+.s-part:nth-child(3){left:34%;animation-duration:7.2s;animation-delay:0.3s;width:22px;height:22px;opacity:0.05}
+.s-part:nth-child(4){left:52%;animation-duration:8.2s;animation-delay:1.2s;width:46px;height:40px;opacity:0.04}
+.s-part:nth-child(5){left:68%;animation-duration:6.4s;animation-delay:0.6s;width:18px;height:18px;opacity:0.05}
+.s-part:nth-child(6){left:28%;animation-duration:7.6s;animation-delay:1.0s;width:30px;height:30px;opacity:0.045}
+.overlay{
+  position:absolute;inset:0;border-radius:14px;pointer-events:none;
+  background:linear-gradient(180deg,transparent 40%, rgba(0,0,0,0.08));
+  mix-blend-mode:soft-light;
+}
+.title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  color:rgba(255,255,255,0.92);
+}
+.title .tagline{
+  font-size:11px;
+  font-weight:600;
+  color:rgba(255,255,255,0.5);
+}
+.badge{
+  background:linear-gradient(90deg,#ff7a45,#ff3b6a);
+  padding:8px 12px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:13px;
+  box-shadow:0 8px 30px rgba(255,80,50,0.08);
+}
+.footer{
+  color:rgba(255,255,255,0.7);
+  font-weight:500;
+  font-size:13px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  justify-content:flex-end;
+}
+.footer span{
+  font-weight:700;
+  color:#fff;
+}
+@keyframes rise1{
+  0%{transform:translate(-50%,0) scale(1) translateZ(0)}
+  50%{transform:translate(-50%,-8px) scale(1.03) translateZ(0)}
+  100%{transform:translate(-50%,0) scale(1) translateZ(0)}
+}
+@keyframes rise2{
+  0%{transform:translate(-50%,0) scale(1)}
+  50%{transform:translate(-50%,-12px) scale(1.06)}
+  100%{transform:translate(-50%,0) scale(1)}
+}
+@keyframes rise3{
+  0%{transform:translate(-50%,0) scale(1)}
+  50%{transform:translate(-50%,-16px) scale(1.12)}
+  100%{transform:translate(-50%,0) scale(1)}
+}
+@keyframes sway1{
+  0%{transform:translate(-50%,0) rotate(-2deg)}
+  50%{transform:translate(-50%,-6px) rotate(2deg)}
+  100%{transform:translate(-50%,0) rotate(-2deg)}
+}
+@keyframes sway2{
+  0%{transform:translate(-50%,0) rotate(1deg)}
+  50%{transform:translate(-50%,-8px) rotate(-1deg)}
+  100%{transform:translate(-50%,0) rotate(1deg)}
+}
+@keyframes sway3{
+  0%{transform:translate(-50%,0) rotate(-6deg)}
+  50%{transform:translate(-50%,-10px) rotate(6deg)}
+  100%{transform:translate(-50%,0) rotate(-6deg)}
+}
+@keyframes ember{
+  0%{transform:translateY(0) scale(0.6);opacity:0}
+  10%{opacity:1}
+  40%{transform:translateY(-80px) translateX(-12px) scale(1.2);opacity:0.9}
+  70%{transform:translateY(-160px) translateX(6px) scale(0.9);opacity:0.4}
+  100%{transform:translateY(-220px) translateX(-8px) scale(0.6);opacity:0}
+}
+@keyframes smokeUp{
+  0%{transform:translateY(0) scale(1);opacity:0.02;filter:blur(6px)}
+  30%{opacity:0.06;filter:blur(10px)}
+  60%{transform:translateY(-120px) scale(1.6);opacity:0.04;filter:blur(16px)}
+  100%{transform:translateY(-260px) scale(2);opacity:0;filter:blur(28px)}
+}
+@keyframes flick{
+  0%{opacity:1}
+  50%{opacity:0.85}
+  100%{opacity:1}
+}
+@media (max-width:520px){
+  .firebase{width:140px;height:200px}
+  .log{width:160px;height:28px;transform:translateY(28px) rotateX(12deg) scaleX(1)}
+  .scene{padding-bottom:18px}
+  .stage{padding:18px;border-radius:14px}
+}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="scene">
+      <div class="firebase" aria-hidden="false">
+        <div class="flame flicker" aria-hidden="false">
+          <div class="f1"></div>
+          <div class="f2"></div>
+          <div class="f3"></div>
+        </div>
+        <div class="embers" aria-hidden="true">
+          <div class="spark"></div>
+          <div class="spark"></div>
+          <div class="spark"></div>
+          <div class="spark"></div>
+          <div class="spark"></div>
+        </div>
+        <div class="smoke" aria-hidden="true">
+          <div class="s-part"></div>
+          <div class="s-part"></div>
+          <div class="s-part"></div>
+          <div class="s-part"></div>
+          <div class="s-part"></div>
+          <div class="s-part"></div>
+        </div>
+        <div class="log" aria-hidden="false"></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div class="title">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:18px;font-weight:800">Inferno UI</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6)">CSS Fire & Smoke Animation</div>
+          <div class="tagline">Made by Team Light</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <div class="badge">Live</div>
+        <div class="footer">Light • Labs • <span>Made by Team Light</span></div>
+      </div>
+    </div>
+    <div class="overlay"></div>
+    <div class="watermark">Made by Team Light</div>
+  </div>
+</body>
+</html>
+
+# Simple Animation Created By TEAM LIGHT

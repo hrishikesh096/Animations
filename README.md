@@ -25,6 +25,9 @@ Each folder includes:
  ┣ 📁 CSS Fire & Smoke Animation
  ┃ ┣ index.html
  ┃ ┗ README.md
+ ┣ 📁 Firework Roket Animation
+ ┃ ┣ index.html
+ ┃ ┗ README.md
  ┣ 📄 LICENSE
  ┗ 📄 README.md (← this file)
 ```
